@@ -1,0 +1,64 @@
+### Create Book
+POST http://127.0.0.1:8000/api/books/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "title" : "title-1",
+    "description" : "blah blah",
+    "categories" : [15,18],
+    "authors": [1]
+}
+
+### Update Book
+PATCH  http://127.0.0.1:8000/api/books/3/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "title" : "Hello Python!",
+    "description" : "Learn Pythos from Zero "}
+
+                ### Update categories in Book ###
+### Add new categories
+PATCH  http://127.0.0.1:8000/api/books/1/categories/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "categories" : [15]
+}
+
+### Remove categories
+DELETE  http://127.0.0.1:8000/api/books/1/categories/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "categories" : [15]
+}
+
+                ### Update authors in Book ###
+### Add new authors
+PATCH  http://127.0.0.1:8000/api/books/3/authors/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "authors" : [1]
+}
+
+### Remove authors
+DELETE  http://127.0.0.1:8000/api/books/3/authors/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "authors" : [1]
+}
+
+### GET All Book
+GET http://127.0.0.1:8000/api/books/ HTTP/1.1
+Content-Type: application/json
+
+### GET Book Details
+GET http://127.0.0.1:8000/api/books/1/ HTTP/1.1
+Content-Type: application/json
+
+### Delete Book
+DELETE http://127.0.0.1:8000/api/books/1/ HTTP/1.1
+Content-Type: application/json
