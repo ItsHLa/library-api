@@ -2,9 +2,16 @@ from typing import Any
 from django.db import models
 from a_books.models.book_author import BookAuthor
 from a_books.models.book_category import BookCategory
-
+from utils.search_service import SearchAndFilteration
 
 class BookManager(models.Manager):
+    
+    def search(self, search, **kwargs):
+        print(search)
+        return SearchAndFilteration.search(
+            manager= self,
+            search_value= search,
+            search_fields= ['title', 'description', 'categories__name', 'authors__first_name', 'authors__last_name'])
     
     def create(self, **kwargs: Any) -> Any:
         data = kwargs

@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.status import *
 from django.shortcuts import get_object_or_404
-
+from django.db.models import Q
 from a_books.serializers.book_serializers import *
 from a_books.serializers.category_serializers import *
       
@@ -38,8 +39,7 @@ class BookView(APIView):
             books = Book.objects.all().prefetch_related('authors', 'categories')
             serializer = BookSerializer(books, many=True)
         return Response(serializer.data,status=HTTP_200_OK)
- 
-       
+      
 class BookCategoryView(APIView):
     
     def patch(self, request, pk, *args, **kwargs): 
@@ -58,7 +58,6 @@ class BookCategoryView(APIView):
         serializer.remove_categories()
         return Response(serializer.data,HTTP_200_OK)
 
-
 class BookAuthorsView(APIView):
     
     def patch(self, request, pk, *args, **kwargs): 
@@ -76,3 +75,13 @@ class BookAuthorsView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.remove_authors()
         return Response(serializer.data,HTTP_200_OK)
+
+class BookSearchView(APIView):
+    
+    def get(self, request, *args, **kwargs):
+        q = request.GET.get('q','').strip()
+        books = Book.objects.search(q)
+        print(books)
+        serializer= BookSerializer(books, many=True)
+        return Response(serializer.data, HTTP_200_OK)
+    
