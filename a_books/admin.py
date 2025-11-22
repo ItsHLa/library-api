@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import *
+
+from a_books.models.book import Book
+from a_books.models.book_author import BookAuthor
+from a_books.models.book_category import BookCategory
+from a_books.models.category import Category
+
 
 admin.site.register(Category)
 admin.site.register(Book)

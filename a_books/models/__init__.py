@@ -1,2 +1,4 @@
-from .category_model import *
-from .book_model import *
+from .category import *
+from .book import *
+from .book_author import *
+from .book_category import *

@@ -7,8 +7,6 @@ from django.shortcuts import get_object_or_404
 from a_books.serializers.book_serializers import *
 from a_books.serializers.category_serializers import *
 
-
-
 class CategoryView(APIView):
     
     def get(self, request, pk=None, *args, **kwargs):
@@ -24,11 +22,12 @@ class CategoryView(APIView):
         data = request.data
         serializer = CreateCategorySerializer(data=data)
         serializer.is_valid(raise_exception = True)
-        categories=serializer.check_categories_existence()
-        if not categories:
-            categories = serializer.save()
-            print(categories)
-        serializer = CategorySerializer(categories, many = True)
+        category= None
+        if serializer.check_category_existence():
+            category = Category.objects.get(name__iexact= serializer.validated_data['name'])
+        if not category:
+            category = serializer.save()
+        serializer = CategorySerializer(category)
         return Response(serializer.data, status=HTTP_201_CREATED)
     
     def delete(self, request, pk, *args, **kwargs):
@@ -41,5 +40,6 @@ class CategoryView(APIView):
         category = get_object_or_404(Category, id=pk)
         serializer = UpdateCategorySerializer(data=data, instance=category)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=HTTP_200_OK)
+        category= serializer.save()
+        serializer = CategorySerializer(category)
+        return Response(serializer.data,status=HTTP_200_OK)

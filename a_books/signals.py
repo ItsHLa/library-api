@@ -1,8 +1,9 @@
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete, post_save, m2m_changed
 from django.db.models import Count
-from a_books.models.book_model import Book, BookCategory
-from a_books.models.category_model import Category
+
+from a_books.models.book import Book
+from a_books.models.category import Category
 
 @receiver(m2m_changed, sender=Book.categories.through)
 def handle_category_removal(sender, instance, action, reverse, **kwargs):

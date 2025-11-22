@@ -1,40 +1,28 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-from a_books.models.category_model import Category
-
-
+from a_books.models.category import Category
 
 User = get_user_model()
 
 class CategorySerializer(serializers.Serializer):
     id = serializers.UUIDField(read_only=True)
     name = serializers.CharField(read_only=True)
-    
-    
 
-class CreateCategorySerializer(CategorySerializer):
-    categories = serializers.ListField(
-        write_only=True,
-        min_length = 1,
-        child=serializers.CharField(
-             
-        ))
-
+class CategoryMixin:
+    def to_representation(self, instance):
+        return CategorySerializer(instance=instance, context = self.context).data
     
-    def check_categories_existence(self):
-        query = Q()
-        for name in self.validated_data['categories']:
-            query |= Q(name__iexact = name)
-        return Category.objects.filter(query)
+class CreateCategorySerializer(CategoryMixin, serializers.Serializer):
+    name= serializers.CharField()
+    
+    def check_category_existence(self):
+        return Category.objects.filter(name = self.validated_data['name']).exists()
     
     def create(self, validated_data):
-        categories = [Category(name=data) for data in validated_data['categories']]
-        return Category.objects.bulk_create(
-            categories,
-            )
+        return Category.objects.create(**validated_data)
     
-class UpdateCategorySerializer(CategorySerializer):
+class UpdateCategorySerializer(CategoryMixin, serializers.Serializer):
     name = serializers.CharField()
     
     def update(self, instance, validated_data):

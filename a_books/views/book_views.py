@@ -22,7 +22,6 @@ class BookView(APIView):
         serializer = UpdateBookSerializer(instance=book, data=data)
         serializer.is_valid(raise_exception=True)
         book = serializer.save() 
-        print(book)
         serializer = BookSerializer(book)
         return Response(serializer.data, status=HTTP_200_OK)
     
@@ -36,10 +35,11 @@ class BookView(APIView):
             book = get_object_or_404(Book, id=pk)
             serializer = BookSerializer(book)
         else:
-            books = Book.objects.all()
+            books = Book.objects.all().prefetch_related('authors', 'categories')
             serializer = BookSerializer(books, many=True)
         return Response(serializer.data,status=HTTP_200_OK)
-        
+ 
+       
 class BookCategoryView(APIView):
     
     def patch(self, request, pk, *args, **kwargs): 
@@ -48,7 +48,7 @@ class BookCategoryView(APIView):
         serializer = UpdateBookCategoriesSerializer(instance=book, data=data)
         serializer.is_valid(raise_exception=True)
         serializer.add_categories()
-        return Response(HTTP_200_OK)
+        return Response(serializer.data, HTTP_200_OK)
     
     def delete(self, request, pk, *args, **kwargs): 
         data = request.data 
@@ -56,7 +56,7 @@ class BookCategoryView(APIView):
         serializer = UpdateBookCategoriesSerializer(instance=book, data=data)
         serializer.is_valid(raise_exception=True)
         serializer.remove_categories()
-        return Response(HTTP_200_OK)
+        return Response(serializer.data,HTTP_200_OK)
 
 
 class BookAuthorsView(APIView):
@@ -67,7 +67,7 @@ class BookAuthorsView(APIView):
         serializer = UpdateBookAuthorSerializer(instance=book, data=data)
         serializer.is_valid(raise_exception=True)
         serializer.add_authors()
-        return Response(HTTP_200_OK)
+        return Response(serializer.data,HTTP_200_OK)
     
     def delete(self, request, pk, *args, **kwargs): 
         data = request.data 
@@ -75,4 +75,4 @@ class BookAuthorsView(APIView):
         serializer = UpdateBookAuthorSerializer(instance=book, data=data)
         serializer.is_valid(raise_exception=True)
         serializer.remove_authors()
-        return Response(HTTP_200_OK)
+        return Response(serializer.data,HTTP_200_OK)
