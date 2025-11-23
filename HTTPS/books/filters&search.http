@@ -1,0 +1,23 @@
+### search book
+GET http://127.0.0.1:8000/api/books/?q=Action HTTP/1.1
+Content-Type: application/json
+
+### filter book by category_name
+GET http://127.0.0.1:8000/api/books/?category=Comedy HTTP/1.1
+Content-Type: application/json
+
+### filter book by authors_name
+GET http://127.0.0.1:8000/api/books/?author=h HTTP/1.1
+Content-Type: application/json
+
+### filter book by author id
+GET http://127.0.0.1:8000/api/books/?a_id=2&a_id=1 HTTP/1.1
+Content-Type: application/json
+
+### filter book by categories id
+GET http://127.0.0.1:8000/api/books/?c_id=30&c_id=31 HTTP/1.1
+Content-Type: application/json
+
+### filter book by categories id
+GET http://127.0.0.1:8000/api/books/?q=comedy&a_id=2 HTTP/1.1
+Content-Type: application/json
