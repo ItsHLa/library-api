@@ -14,7 +14,10 @@ class CategoryView(APIView):
             category = get_object_or_404(Category, id=pk)
             serializer = CategorySerializer(category)
         else:
+            q = request.GET.get('q','')
             categories = Category.objects.all()
+            if q:
+                categories = categories.search(q)
             serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
     

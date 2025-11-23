@@ -1,0 +1,8 @@
+
+### All Categories
+GET http://127.0.0.1:8000/api/books/categories/ HTTP/1.1
+Content-Type: application/json
+
+### Category Detail
+GET http://127.0.0.1:8000/api/books/categories/29/ HTTP/1.1
+Content-Type: application/json

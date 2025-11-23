@@ -2,6 +2,7 @@ from django.db.models import Q
 
 def search(manager, search_value, search_fields):
     print(search_fields)
+    print(search_value)
     if not search_value:
         return []
     query = Q()

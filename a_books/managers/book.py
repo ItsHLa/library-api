@@ -8,9 +8,7 @@ from utils.search_service import search
 class BookQuerySet(models.QuerySet):
     
     def filter_by_category_ids(self, ids):
-        query = Q()
-        query |= Q(categories__id__in= ids)
-        return self.filter(query)
+        return self.filter(categories__id__in= ids)
     
     def filter_by_category_names(self, names):
         return self.filter(categories__name__in= names)
