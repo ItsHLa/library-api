@@ -4,7 +4,7 @@ from rest_framework.status import *
 from django.shortcuts import get_object_or_404
 from a_books.serializers.book_serializers import *
 from a_books.serializers.category_serializers import *
-
+from utils.pagination import Paginator
      
 class BookView(APIView):
     
@@ -30,39 +30,59 @@ class BookView(APIView):
         book.delete()
         return Response(status=HTTP_204_NO_CONTENT)
     
-    def get(self, request, pk=None, *args, **kwargs):
+    def _get_object(self, request, pk):
+        book = get_object_or_404(Book, id=pk)
+        serializer = BookSerializer(book)
+        return serializer.data
+    
+    
+    def _get_list(self, request, pk=None, *args, **kwargs):
         q = request.GET.get('q', None)
         categories = request.GET.getlist('category','')
         authors = request.GET.getlist('author','')
         c_ids = request.GET.getlist('c_id','')
         a_ids = request.GET.getlist('a_id','')
+        page = request.GET.get('page','1') 
+        limit = request.GET.get('limit','20')
         
-        if pk:
-            ## book Detail
-            book = get_object_or_404(Book, id=pk)
-            serializer = BookSerializer(book)
-        else:
-            books = Book.objects.all().prefetch_related('authors', 'categories')
+        books = Book.objects.all().prefetch_related('authors', 'categories')
             
             ## searching for books
-            if q:
-                books = books.search(q)
+        if q:
+            books = books.search(q)
                 
             ## filter books
-            if c_ids:
-                c_ids= list(map(int, c_ids))
-                books = books.filter_by_category_ids(c_ids)
-            if a_ids:
-                a_ids= list(map(int, a_ids))
-                books = books.filter_by_author_ids(a_ids)
-            if categories:
-                books = books.filter_by_category_names(categories)
-            if authors:
-                books = books.filter_by_author_names(authors)
-                
-            serializer = BookSerializer(books, many=True)
-        return Response(serializer.data,status=HTTP_200_OK)
+        if c_ids:
+            c_ids= list(map(int, c_ids))
+            books = books.filter_by_category_ids(c_ids)
+        if a_ids:
+            a_ids= list(map(int, a_ids))
+            books = books.filter_by_author_ids(a_ids)
+        if categories:
+            books = books.filter_by_category_names(categories)
+        if authors:
+            books = books.filter_by_author_names(authors)
+        response = {}
+        if page and limit:
+            paginator = Paginator(
+                    page=page,
+                    page_size=limit,
+                    items=books)
+            books, data = paginator.paginate()
+            response = data
+        serializer = BookSerializer(books, many=True)
+        response['items'] = serializer.data
+        return response
+        
       
+    def get(self, request, pk=None, *args, **kwargs):
+        response = {}
+        if pk:
+            response = self._get_object(request, pk)
+        else:
+            response = self._get_list(request, pk)
+        return Response(response,status=HTTP_200_OK)
+        
 class BookCategoryView(APIView):
     
     def patch(self, request, pk, *args, **kwargs): 
