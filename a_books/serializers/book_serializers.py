@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_list_or_404
 from a_books.serializers.category_serializers import CategorySerializer
 from a_books.serializers.author_serializer import *
-from a_comments.serializer import CommentSerializer
+from a_comments.serializers import CommentSerializer
 from ..models import *
 
 User = get_user_model()

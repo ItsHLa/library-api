@@ -1,0 +1,7 @@
+### All Comments
+GET http://127.0.0.1:8000/api/books/24/comments/ HTTP/1.1
+Content-Type: application/json
+
+### Comment Detail
+GET http://127.0.0.1:8000/api/books/24/comments/1/ HTTP/1.1
+Content-Type: application/json
