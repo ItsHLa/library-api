@@ -1,6 +1,7 @@
 from typing import Any
 from django.db import models
 from django.db.models import Q
+from django.shortcuts import get_list_or_404
 from a_books.models.book_author import BookAuthor
 from a_books.models.book_category import BookCategory
 from utils.search_service import search
@@ -57,13 +58,14 @@ class BookManager(models.Manager):
         self.add_authors(book, authors)
         return book
     
-    def add_categories(self, book, categories):
+    def add_categories(self, book, categories):        
         categories = [
             BookCategory(
                 category= category,
                 book= book
                 ) for category in categories]
         return BookCategory.objects.bulk_create(categories)
+    
     
     def remove_categories(self, book, categories, **kwargs: Any):
         book.categories.remove(*categories)

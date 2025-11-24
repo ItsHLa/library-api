@@ -5,7 +5,8 @@ from django.shortcuts import get_object_or_404
 from a_books.serializers.book_serializers import *
 from a_books.serializers.category_serializers import *
 from utils.pagination import Paginator
-     
+from a_comments.models import Comment
+from django.db.models import Prefetch
 class BookView(APIView):
     
     def post(self, request, *args, **kwargs):
@@ -31,10 +32,21 @@ class BookView(APIView):
         return Response(status=HTTP_204_NO_CONTENT)
     
     def _get_object(self, request, pk):
-        book = get_object_or_404(Book, id=pk)
+        # reverse ForeignKey
+        book = Book.objects.prefetch_related( 
+            Prefetch( ## get comments
+                'book_comments',
+                queryset = Comment.objects.filter(reply__isnull=True).select_related('user').prefetch_related(
+                    Prefetch('replies', ## get_replies
+                             queryset= Comment.objects.select_related('user'))
+                )
+            )
+        ).get(id=pk)
+        
+        if not book:
+            return {'detail': 'No Book matches the given query.'}, HTTP_404_NOT_FOUND
         serializer = BookSerializer(book)
-        return serializer.data
-    
+        return serializer.data , HTTP_200_OK
     
     def _get_list(self, request, pk=None, *args, **kwargs):
         q = request.GET.get('q', None)
@@ -70,18 +82,18 @@ class BookView(APIView):
                     items=books)
             books, data = paginator.paginate()
             response = data
-        serializer = BookSerializer(books, many=True)
+        serializer = BookListSerializer(books, many=True)
         response['items'] = serializer.data
-        return response
+        return response , HTTP_200_OK
         
-      
     def get(self, request, pk=None, *args, **kwargs):
         response = {}
+        status = None
         if pk:
-            response = self._get_object(request, pk)
+            response, status = self._get_object(request, pk)
         else:
-            response = self._get_list(request, pk)
-        return Response(response,status=HTTP_200_OK)
+            response, status = self._get_list(request, pk)
+        return Response(response,status=status)
         
 class BookCategoryView(APIView):
     
@@ -89,6 +101,8 @@ class BookCategoryView(APIView):
         data = request.data 
         book = get_object_or_404(Book, id=pk)
         serializer = UpdateBookCategoriesSerializer(instance=book, data=data)
+        categories = get_list_or_404(Category, pk__in= serializer.validated_data['categories'])
+        serializer.validated_data['categories'] = categories
         serializer.is_valid(raise_exception=True)
         serializer.add_categories()
         return Response(serializer.data, HTTP_200_OK)
@@ -97,6 +111,8 @@ class BookCategoryView(APIView):
         data = request.data 
         book = get_object_or_404(Book, id=pk)
         serializer = UpdateBookCategoriesSerializer(instance=book, data=data)
+        categories = get_list_or_404(Category, pk__in= serializer.validated_data['categories'])
+        serializer.validated_data['categories'] = categories
         serializer.is_valid(raise_exception=True)
         serializer.remove_categories()
         return Response(serializer.data,HTTP_200_OK)

@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_list_or_404
 from a_books.serializers.category_serializers import CategorySerializer
 from a_books.serializers.author_serializer import *
+from a_comments.serializer import CommentSerializer
 from ..models import *
 
 User = get_user_model()
@@ -13,10 +14,24 @@ class BookSerializer(serializers.Serializer):
     description = serializers.CharField()
     categories = CategorySerializer(many=True)
     authors = AuthorSerializer(many=True)
+    comments = serializers.SerializerMethodField()
+    
+    def get_comments(self, obj):
+        return CommentSerializer(obj.book_comments, many=True).data
+
+class BookListSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
+    title = serializers.CharField()
+    description = serializers.CharField()
+    categories = serializers.SerializerMethodField()
+    authors = serializers.SerializerMethodField()
+    comments_count = serializers.IntegerField()
+    
+    def get_categories(self, obj):
+        return CategorySerializer(obj.categories, many=True).data
 
     def get_authors(self, obj):
-        authors = obj.authors.all()
-        return [f"{author.first_name} {author.last_name}" for author in authors]
+        return AuthorSerializer(obj.authors, many=True).data
 
 class BookRepresentationMixin:
     def to_representation(self, instance):
@@ -55,16 +70,15 @@ class UpdateBookSerializer(BookRepresentationMixin, serializers.Serializer):
         return instance
 
 class UpdateBookCategoriesSerializer(BookRepresentationMixin, serializers.Serializer):
-    categories = serializers.ListField(child=serializers.IntegerField())
+    categories = serializers.ListField(child=serializers.IntegerField(
+    ))
     
     def add_categories(self):
-        categories = get_list_or_404(Category, pk__in= self.validated_data['categories'])
-        instance = Book.objects.add_categories(self.instance, categories)
+        instance = Book.objects.add_categories(self.instance, self.validated_data['categories'])
         return instance
         
     def remove_categories(self):
-        categories = get_list_or_404(Category, pk__in= self.validated_data['categories'])
-        instance = Book.objects.remove_categories(self.instance, categories)
+        instance = Book.objects.remove_categories(self.instance, self.validated_data['categories'])
         return instance
     
 class UpdateBookAuthorSerializer(BookRepresentationMixin, serializers.Serializer):

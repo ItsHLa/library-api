@@ -22,6 +22,10 @@ class Book(models.Model):
     
     objects = BookManager()
     
+    @property
+    def comments_count(self):
+        return self.book_comments.count()
+    
     def __str__(self) -> str:
         return f'{self.pk} - {self.title}'
     
