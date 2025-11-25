@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
+    
     'a_users',
     'a_books',
     'a_comments'
@@ -115,3 +117,16 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'a_users.User'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'a_users.utils.authentication.JWTAuthentication',  
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'a_users.permissions.IsAuthenticated', 
+    ]
+}
+
+REFRESH_EXPARATION_TIMEDELTA = timedelta(hours=1)
+ACCESS_EXPARATION_TIMEDELTA = timedelta(minutes=30)
