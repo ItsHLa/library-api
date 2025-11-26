@@ -16,7 +16,7 @@ class JWTAuthentication(BaseAuthentication):
             token = header.split(' ')[1]
             valid, data = RefreshToken.validate(token)
             # check if blacklisted
-            if BlacklistedTokens.objects.is_blacklisted(data['jti']):
+            if valid and BlacklistedTokens.objects.is_blacklisted(data['jti']):
                 raise AuthenticationFailed("Token is blacklisted")
             
             if not valid:

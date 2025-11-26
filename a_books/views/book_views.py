@@ -4,13 +4,17 @@ from rest_framework.status import *
 from django.shortcuts import get_object_or_404
 from a_books.serializers.book_serializers import *
 from a_books.serializers.category_serializers import *
-from a_users.permissions import IsAdmin
+from a_users.permissions import IsAdmin, IsAuthenticated
 from utils.pagination import Paginator
 from a_comments.models import Comment
 from django.db.models import Prefetch
 
 class BookView(APIView):
-    permission_classes=[IsAdmin]
+    
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [IsAuthenticated()]
+        return [IsAdmin()]
     
     def post(self, request, *args, **kwargs):
         data = request.data
@@ -99,6 +103,7 @@ class BookView(APIView):
         return Response(response,status=status)
         
 class BookCategoryView(APIView):
+    permission_classes=[IsAdmin]
     
     def patch(self, request, pk, *args, **kwargs): 
         data = request.data 
@@ -121,7 +126,8 @@ class BookCategoryView(APIView):
         return Response(serializer.data,HTTP_200_OK)
 
 class BookAuthorsView(APIView):
-    
+    permission_classes=[IsAdmin]
+     
     def patch(self, request, pk, *args, **kwargs): 
         data = request.data 
         book = get_object_or_404(Book, id=pk)
