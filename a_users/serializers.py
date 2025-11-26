@@ -20,6 +20,7 @@ class UserSerializer(serializers.Serializer):
 
 class SignUpSerializer(UserSerializer):
     token = serializers.SerializerMethodField()
+    is_admin = serializers.BooleanField(required= False)
     
     def check_user(self):    
         if User.objects.filter(email = self.validated_data['email']).exists():

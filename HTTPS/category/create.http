@@ -1,7 +1,7 @@
 ### Create Categories
 POST http://127.0.0.1:8000/api/books/categories/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImp0aSI6IjlmYTIyMTZkZTJhNTQ2YmNhM2ZkNjVlNGQ0MjMxOGM3IiwiZXhwIjoxNzY0MTY5MjgwfQ.Q0EZGWT7hlcOLplskngVUyyFi8zAHU2avbJLM2hbQIw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImp0aSI6IjI2OTUzZWY5M2E4OTRiMjI5M2VmNWRmNDg1Nzg4OTJjIiwiZXhwIjoxNzY0MTcwNDU0fQ.uQTw7MPyolS_0Y6xJuIZrs2Jm3MA8xccQtPx11d86H8
 
 {
     "name" : "c10"

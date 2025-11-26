@@ -6,8 +6,10 @@ from django.shortcuts import get_object_or_404
 
 from a_books.serializers.book_serializers import *
 from a_books.serializers.category_serializers import *
+from a_users.permissions import IsAdmin
 
 class CategoryView(APIView):
+    permission_classes=[IsAdmin]
     
     def get(self, request, pk=None, *args, **kwargs):
         if pk:

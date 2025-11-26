@@ -4,10 +4,13 @@ from rest_framework.status import *
 from django.shortcuts import get_object_or_404
 from a_books.serializers.book_serializers import *
 from a_books.serializers.category_serializers import *
+from a_users.permissions import IsAdmin
 from utils.pagination import Paginator
 from a_comments.models import Comment
 from django.db.models import Prefetch
+
 class BookView(APIView):
+    permission_classes=[IsAdmin]
     
     def post(self, request, *args, **kwargs):
         data = request.data
