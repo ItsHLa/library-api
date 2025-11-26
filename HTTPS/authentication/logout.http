@@ -1,12 +1,9 @@
 ### Log-out
 POST http://127.0.0.1:8000/api/users/logout/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiZW1haWwiOiJmdWppbW90b0BnbWFpbC5jb20iLCJleHAiOjE3NjQwOTQ0ODJ9.dQfc2jY100RrOOrYBvnM1hB1CML0EwSaFdAnFfsn0B0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImp0aSI6IjA3NDU1YTk4Yjk3ODRjMWU4OTU3MmI5YzRlMGMwNGVhIiwiZXhwIjoxNzY0MTY3MTM4fQ.YkQU1fPkbsoHOQtyoGH7GXVGU-lFWPJJa4PKgrzd9hw
 
 {
-    "first_name" : "tatsuki",
-    "last_name" : "fujimoto",
-    "email" : "fujimoto@gmail.com",
-    "username" : "fujimoto",
-    "password" : "t_password"
+    "refresh" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImp0aSI6ImViNjdiOTQxYWZlODQxODBiNWY5ZTQzZGE5OTJmNWE1IiwiYV9qdGkiOiIwNzQ1NWE5OGI5Nzg0YzFlODk1NzJiOWM0ZTBjMDRlYSIsImV4cCI6MTc2NDE2ODkzOH0.kQbI8cnt8TXWHLRGCHVd2JEEZzgWFV1bDfW5VX_7nv0"
+  
 }

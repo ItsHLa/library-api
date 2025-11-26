@@ -12,9 +12,9 @@ class CommentAPIView(APIView):
         data = request.data
         serializer = CreateCommentSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        user = get_object_or_404(User, id=1)
+        user = request.user
         book = get_object_or_404(Book, id=book_pk)
-        reply_to = serializer.validated_data['reply_to']
+        reply_to = serializer.validated_data.get('reply_to', None)
         if reply_to:
             reply_to= get_object_or_404(Comment, id=reply_to)
             serializer.validated_data['reply_to'] = reply_to

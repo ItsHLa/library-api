@@ -1,6 +1,7 @@
 ### Create Comment
-POST http://127.0.0.1:8000/api/books/24/comments/ HTTP/1.1
+POST http://127.0.0.1:8000/api/books/26/comments/ HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImp0aSI6IjlmYTIyMTZkZTJhNTQ2YmNhM2ZkNjVlNGQ0MjMxOGM3IiwiZXhwIjoxNzY0MTY5MjgwfQ.Q0EZGWT7hlcOLplskngVUyyFi8zAHU2avbJLM2hbQIw
 
 {
     "content" : "comment-1"
@@ -8,7 +9,7 @@ Content-Type: application/json
 
 
 ### Create Reply
-POST http://127.0.0.1:8000/api/books/24/comments/ HTTP/1.1
+POST http://127.0.0.1:8000/api/books/26/comments/ HTTP/1.1
 Content-Type: application/json
 
 {

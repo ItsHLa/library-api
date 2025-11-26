@@ -70,9 +70,8 @@ class LoginSerializer(serializers.Serializer):
         
 class LogOutSerializer(serializers.Serializer):
     refresh = serializers.CharField(
-        max_length = 200,
         write_only = True)
     
     def logout(self):
-           pass
+           RefreshToken.blacklist(self.validated_data['refresh'])
         
