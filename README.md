@@ -1,4 +1,4 @@
-# Library Store RESTful API - README
+# Library RESTful API 
 
 ## 📚 Project Overview
 A RESTful API for a library management system with user authentication, book management, comment functionality, and role-based access control.
