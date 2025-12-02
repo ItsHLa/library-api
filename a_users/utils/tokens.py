@@ -9,6 +9,29 @@ from a_users.utils.blacklisted_tokens import BlacklistedTokens
 
 User = get_user_model()
 
+class JwtTokens:
+    
+    @staticmethod
+    def create_token(payload, timedelta, secret_key):
+        token_payload = {
+            **payload,
+            'exp' : datetime.now(timezone.utc) + timedelta,}
+        return jwt.encode(
+           token_payload,
+            secret_key,
+            algorithm='HS256')
+    
+    @staticmethod
+    def validate(token, secret_key):
+        try:
+            payload = jwt.decode(token,secret_key,algorithms=['HS256'])
+            exparation = payload.pop('exp')
+            return True, payload
+        except jwt.ExpiredSignatureError:
+            return False,'Token has expired'
+        except jwt.InvalidTokenError:
+            return False,'Invalid Token'
+    
 
 class RefreshToken:
     _SECRET_KEY  = settings.SECRET_KEY
@@ -33,13 +56,11 @@ class RefreshToken:
             jti = data['a_jti'])
         
     def _create_token(self, payload, timedelta):
-        token_payload = {
-            **payload,
-            'exp' : datetime.now(timezone.utc) + timedelta,}
-        return jwt.encode(
-           token_payload,
-            self._SECRET_KEY,
-            algorithm='HS256')
+        token = JwtTokens.create_token(
+            payload,
+            timedelta,
+            self._SECRET_KEY,)
+        return token
     
     def _set_jti(self):
         return uuid4().hex  
@@ -47,7 +68,6 @@ class RefreshToken:
     def _create_access(self, payload):
         jti = self._set_jti()
         payload['jti'] = jti
-        print(payload)
         access = self._create_token(payload, settings.ACCESS_EXPARATION_TIMEDELTA)
         return access, jti
     
@@ -55,14 +75,12 @@ class RefreshToken:
         jti = self._set_jti()
         payload['jti'] = jti
         payload['a_jti'] = a_jti
-        print(payload)
         refresh = self._create_token(payload, settings.REFRESH_EXPARATION_TIMEDELTA)
         return refresh
     
     @classmethod
     def for_user(cls, user):
         payload = {'id' : user.id}
-        print(payload)
         token = RefreshToken()
         
         token.access, a_jti =  token._create_access(payload)
@@ -72,12 +90,5 @@ class RefreshToken:
     
     @classmethod
     def validate(cls, token):
-        try:
-            payload = jwt.decode(token,cls._SECRET_KEY,algorithms=['HS256'])
-            exparation = payload.pop('exp')
-            return True, payload
-        except jwt.ExpiredSignatureError:
-            return False,'Token has expired'
-        except jwt.InvalidTokenError:
-            return False,'Invalid Token'
+        return JwtTokens.validate(token, cls._SECRET_KEY)
         

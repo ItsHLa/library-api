@@ -2,17 +2,24 @@ from rest_framework import serializers
 from rest_framework.status import *
 from django.contrib.auth import get_user_model
 
-from a_users.utils.refresh_tokens import RefreshToken
+from a_users.utils.tokens import RefreshToken
 
 
 User = get_user_model()
+
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    
+class ConfirmResetPasswordSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    password = serializers.CharField(min_length=8)
 
 class GenerateOtpSerializer(serializers.Serializer):
     email = serializers.EmailField()
     
 class VerifyOtpSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    otp = serializers.CharField(max_length=6)
+    otp = serializers.CharField(min_length=6, max_length=6,)
 
 class UserSerializer(serializers.Serializer):
     id = serializers.UUIDField( read_only = True)

@@ -4,7 +4,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import get_user_model
 
 from a_users.utils.blacklisted_tokens import BlacklistedTokens
-from a_users.utils.refresh_tokens import RefreshToken
+from a_users.utils.tokens import RefreshToken
 
 User = get_user_model()
 
