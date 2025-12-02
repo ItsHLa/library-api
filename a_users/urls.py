@@ -3,5 +3,7 @@ from .views import *
 urlpatterns = [
     path('', SignUpView.as_view(), name='sign-up'),
     path('login/', LogInView.as_view(), name='log-in'),
-    path('logout/', LogOutView.as_view(), name='log-out')
+    path('logout/', LogOutView.as_view(), name='log-out'),
+    
+    path('otp/<str:type>/', GenerateOtpAPIView.as_view(), name='log-out')
 ]

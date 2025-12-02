@@ -1,8 +1,54 @@
+from utils.email_service import EmailService
+from utils.otps import OTP
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import *
 from .permissions import AllowAny
 from .serializers import *
+
+class GenerateOtpAPIView(APIView):
+    permission_classes = [AllowAny]
+    
+    def _generate(self, request):
+        serializer = GenerateOtpSerializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data['email']
+        
+        ## generate otp
+        code = OTP.generate(email)
+        
+        try:
+            ## send email
+            EmailService.send(
+            subject = 'Email Verification',
+            message =  f'Your verification code is {code}',
+            from_mail ='resqteambackup@gmail.com',
+            to_mails_list= [email])
+            return 'OTP sent successfully', HTTP_200_OK
+        except Exception as e :
+            return 'Failed to send OTP. Please try again later.', HTTP_400_BAD_REQUEST
+    
+    def _verify(self, request) : 
+        data = request.data
+        serializer = VerifyOtpSerializer(data = data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data['email']  
+        otp = serializer.validated_data['otp']  
+        is_valid, msg = OTP.verify(email, otp)
+        if is_valid:
+            return msg, HTTP_200_OK
+        return msg, HTTP_400_BAD_REQUEST
+            
+        
+         
+    def post(self, request, type, *args, **kwargs):
+        if type == 'generate':
+           msg, status =  self._generate(request)
+        if type == 'verify':
+            msg, status = self._verify(request)
+        return Response({'detail' : msg}, status = status)
+
+
 
 class SignUpView(APIView):
     permission_classes = [AllowAny]

@@ -42,7 +42,7 @@ class RefreshToken:
             algorithm='HS256')
     
     def _set_jti(self):
-        return uuid4().hex  # stole from simple_jwt package
+        return uuid4().hex  
     
     def _create_access(self, payload):
         jti = self._set_jti()

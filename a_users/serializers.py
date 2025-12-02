@@ -7,6 +7,12 @@ from a_users.utils.refresh_tokens import RefreshToken
 
 User = get_user_model()
 
+class GenerateOtpSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    
+class VerifyOtpSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp = serializers.CharField(max_length=6)
 
 class UserSerializer(serializers.Serializer):
     id = serializers.UUIDField( read_only = True)
@@ -59,10 +65,14 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError({'password' : ['No User account with this credintals']}, code=HTTP_404_NOT_FOUND)
               
     def check_user(self):
-        user = User.objects.get(email = self.validated_data['email'])
-        if not user:
+        try:
+            user = User.objects.get(email = self.validated_data['email'])
+            return user
+        except User.DoesNotExist:
             raise serializers.ValidationError({'email' : ['Users with this email dose not exists']}, code=HTTP_404_NOT_FOUND) 
-        return user
+
+            
+        
     
     def login(self):
            user = self.check_user()

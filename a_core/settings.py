@@ -1,5 +1,15 @@
 from datetime import timedelta
 from pathlib import Path
+import environ
+from utils.cloudinary import Cloudinary
+import os
+env = environ.Env()
+environ.Env.read_env()
+
+
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!tjtoua^2ygx#h_cd+4hu%%g+b!+!#97qkui_de3b)u569rng2'
+SECRET_KEY = env.str('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -28,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
+    
+    'cloudinary',
     
     'a_users',
     'a_books',
@@ -130,3 +142,19 @@ REST_FRAMEWORK = {
 
 REFRESH_EXPARATION_TIMEDELTA = timedelta(hours=1)
 ACCESS_EXPARATION_TIMEDELTA = timedelta(minutes=30)
+
+CLOUD_NAME = env('CLOUD_NAME')
+CLOUD_API_KEY = env('CLOUD_API_KEY')
+CLOUD_API_SECRET = env('CLOUD_API_SECRET')
+
+EMAIL_BACKEND = env('EMAIL_BACKEND')
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+
+Cloudinary(
+    CLOUD_NAME,
+    CLOUD_API_KEY,
+    CLOUD_API_SECRET)
