@@ -40,18 +40,19 @@ class BookView(APIView):
     
     def _get_object(self, request, pk):
         # reverse ForeignKey
-        book = Book.objects.prefetch_related( 
+        try:
+            book = Book.objects.prefetch_related( 
+                                             'media',
             Prefetch( ## get comments
                 'book_comments',
-                queryset = Comment.objects.filter(reply__isnull=True).select_related('user').prefetch_related(
+                queryset = Comment.objects.filter(reply_to__isnull=True).select_related('user').prefetch_related(
                     Prefetch('replies', ## get_replies
                              queryset= Comment.objects.select_related('user'))
                 )
-            )
+            ),
         ).get(id=pk)
-        
-        if not book:
-            return {'detail': 'No Book matches the given query.'}, HTTP_404_NOT_FOUND
+        except Book.DoesNotExist:
+            return {'detail': 'No Book matches the given query.'}, HTTP_404_NOT_FOUND    
         serializer = BookSerializer(book)
         return serializer.data , HTTP_200_OK
     

@@ -42,6 +42,7 @@ class ResetPasswordAPIView(APIView):
             try:
                 user = User.objects.get(email= data['email'])
                 user.set_password(password)
+                user.save()
                 return 'Password reset successfully', HTTP_200_OK
             except User.DoesNotExist:
                 return 'User with this email dose not exsists', HTTP_400_BAD_REQUEST
@@ -54,8 +55,6 @@ class ResetPasswordAPIView(APIView):
         else:
            msg, status = self._verify(request)
         return Response({'detail' : msg}, status = status)
-
-
 
 class GenerateOtpAPIView(APIView):
     permission_classes = [AllowAny]
@@ -96,8 +95,6 @@ class GenerateOtpAPIView(APIView):
         if type == 'verify':
             msg, status = self._verify(request)
         return Response({'detail' : msg}, status = status)
-
-
 
 class SignUpView(APIView):
     permission_classes = [AllowAny]

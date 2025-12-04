@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_list_or_404
+from a_books.serializers.book_media_serializer import BookMediaSerializers
 from a_books.serializers.category_serializers import CategorySerializer
 from a_books.serializers.author_serializer import *
 from a_comments.serializers import CommentSerializer
@@ -15,6 +16,10 @@ class BookSerializer(serializers.Serializer):
     categories = CategorySerializer(many=True)
     authors = AuthorSerializer(many=True)
     comments = serializers.SerializerMethodField()
+    media = serializers.SerializerMethodField()
+    
+    def get_media(self, obj):
+        return BookMediaSerializers(obj.media, many=True).data
     
     def get_comments(self, obj):
         return CommentSerializer(obj.book_comments, many=True).data
