@@ -5,11 +5,13 @@ from django.shortcuts import get_object_or_404
 from a_books.models.book_media import *
 
 from a_books.serializers.book_media_serializer import BookMediaSerializers
+from a_users.permissions import IsAdmin
 from utils.cloudinary import Cloudinary, CloudinaryResourceType
 from a_books.models.book import Book
 
 class BookMediaAPIView(APIView):
-    
+    permission_classes = [IsAdmin
+                          ]
     def delete(self, request, public_id, type, *args, **kwargs):
         try:
             uploader = Cloudinary.get_instance()
@@ -32,7 +34,6 @@ class BookMediaAPIView(APIView):
         except Exception as e:
             return Response({'detail' : 'Something went wrong try again later'},HTTP_400_BAD_REQUEST)
             
-
     def post(self, request, pk, type, *args, **kwargs):
         
         # get file from request
