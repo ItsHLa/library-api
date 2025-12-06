@@ -14,6 +14,10 @@ class Cloudinary:
     
     _instance = None
     
+    def set_resource_type(self, resource_type):
+        if isinstance(resource_type, CloudinaryResourceType):
+            return resource_type.value
+        return resource_type
     
     def __init__(self, cloud_name, api_key, api_secret) -> None:
         self._instance = cloudinary.config(
@@ -36,11 +40,16 @@ class Cloudinary:
             cls._instance = cls(cloud_name, api_key, api_secret)
         return cls._instance
     
-    def delete_file(self, public_id= None, resource_type= CloudinaryResourceType.IMAGE ):
+    def delete_file(self, public_id= None, resource_type= CloudinaryResourceType.IMAGE):
+        
+        # get resource_type depending on type
+        resource_type = self.set_resource_type(resource_type)
+        print(resource_type)
+        
         try:
             result = uploader.destroy(
                 public_id = f'book_media/{public_id}',
-                resource_type = resource_type.value)
+                resource_type = resource_type)
             print(result)
             if result.get('result') == 'ok':
                 return True, result.get('result')
@@ -51,20 +60,30 @@ class Cloudinary:
             return False, str(e)
     
     def get_file(self, public_id= None, resource_type= CloudinaryResourceType.IMAGE ):
+        
+        # get resource_type depending on type
+        resource_type = self.set_resource_type(resource_type)
+        print(resource_type)
+        
         try:
-            result = api.resource(public_id=public_id, resource_type=resource_type.value)
+            result = api.resource(public_id=public_id, resource_type=resource_type)
             return result
         except Exception as e:
             print(f"Exception: {e}")
             return None
     
     def upload_file(self, file, folder='image', resource_type = CloudinaryResourceType.IMAGE):
+        
+        # get resource_type depending on type
+        resource_type = self.set_resource_type(resource_type)
+        print(resource_type)
+        
         try:
             result = uploader.upload(
             file = file,
             public_id = uuid4().hex,
             folder = folder,
-            resource_type = resource_type.value,
+            resource_type = resource_type,
             quality="auto",
             fetch_format="auto")
             
@@ -72,7 +91,7 @@ class Cloudinary:
                 return True, {
                     'success' : True,
                     'public_id' : result['public_id'].split('/')[1],
-                    'resource_type' : result['resource_type'],
+                    'resource_type' : resource_type,
                     'bytes' : result['bytes'],
                     'secure_url' : result['secure_url'],
                     'display_name' : result['display_name']}

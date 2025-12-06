@@ -16,8 +16,6 @@ urlpatterns = [
     path('<str:public_id>/media/delete/<str:type>/', BookMediaAPIView.as_view(), name='books'),
     path('<str:pk>/', BookView.as_view(), name='books'),
     
-    
-    
     path('<str:pk>/categories/', BookCategoryView.as_view(), name='books'),
     path('<str:pk>/authors/', BookAuthorsView.as_view(), name='books'),
     
